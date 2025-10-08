@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leaderboard - Procrastination Timer</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .leaderboard-container {
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+
+        .back-btn {
+            background: #4cafef;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn:hover {
+            background: #3a9dd9;
+        }
+
+        .leaderboard-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .current-streak {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6f61, #ff856f);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(255, 111, 97, 0.3);
+            margin: 1rem 0;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .leaderboard-row {
+            display: grid;
+            grid-template-columns: 60px 2fr 1fr 1.5fr 1.5fr;
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            align-items: center;
+            transition: background 0.2s ease;
+        }
+
+        .leaderboard-row:hover {
+            background: #fff3e6;
+        }
+
+        .leaderboard-row.header {
+            background: #ff6f61;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .leaderboard-row.header:hover {
+            background: #ff6f61;
+        }
+
+        .rank {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .rank.gold { color: #ffd700; }
+        .rank.silver { color: #c0c0c0; }
+        .rank.bronze { color: #cd7f32; }
+
+        .score-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .score-excellent { background: #4caf50; color: white; }
+        .score-good { background: #8bc34a; color: white; }
+        .score-okay { background: #ffc107; color: white; }
+        .score-poor { background: #ff9800; color: white; }
+        .score-bad { background: #f44336; color: white; }
+
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+            font-style: italic;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff6f61;
+        }
+    </style>
+</head>
+<body>
+    <div class="leaderboard-container">
+        <button class="back-btn" id="backBtn">← Back to Timer</button>
+        
+        <div class="leaderboard-header">
+            <h1>📊 Your Leaderboard</h1>
+            <div class="current-streak" id="streakDisplay">🔥 0 Day Streak</div>
+        </div>
+
+        <div class="summary-stats" id="summaryStats">
+            <!-- Summary stats will be inserted here -->
+        </div>
+
+        <h2 style="text-align: center; margin-bottom: 1rem;">Last 7 Days Performance</h2>
+        
+        <div class="leaderboard-table">
+            <div class="leaderboard-row header">
+                <div>Rank</div>
+                <div>Date</div>
+                <div>Score</div>
+                <div>Focus Time</div>
+                <div>Procrastination</div>
+            </div>
+            <div id="leaderboardBody">
+                <!-- Leaderboard rows will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function isElectron() {
+            return typeof window !== "undefined" && typeof window.process === "object" && window.process.type === "renderer";
+        }
+
+        const backBtn = document.getElementById("backBtn");
+        const streakDisplay = document.getElementById("streakDisplay");
+        const leaderboardBody = document.getElementById("leaderboardBody");
+        const summaryStats = document.getElementById("summaryStats");
+
+        // Get data from localStorage
+        const weeklyStats = JSON.parse(localStorage.getItem("weeklyStats")) || [];
+        const streak = parseInt(localStorage.getItem("streak")) || 0;
+
+        // Display streak
+        streakDisplay.textContent = `🔥 ${streak} Day Streak`;
+
+        // Calculate summary statistics
+        function calculateSummaryStats() {
+            if (weeklyStats.length === 0) return null;
+
+            const last7Days = weeklyStats.slice(-7);
+            const totalFocus = last7Days.reduce((sum, day) => sum + day.focus, 0);
+            const totalProcrastination = last7Days.reduce((sum, day) => sum + day.procrastination, 0);
+            const avgScore = Math.round(last7Days.reduce((sum, day) => sum + day.score, 0) / last7Days.length);
+            const bestDay = last7Days.reduce((best, day) => day.score > best.score ? day : best, last7Days[0]);
+
+            return { totalFocus, totalProcrastination, avgScore, bestDay };
+        }
+
+        function formatTime(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            if (h > 0) return `${h}h ${m}m`;
+            return `${m}m`;
+        }
+
+        // Display summary stats
+        const stats = calculateSummaryStats();
+        if (stats) {
+            summaryStats.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-label">Total Focus (7d)</div>
+                    <div class="stat-value">${formatTime(stats.totalFocus)}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Average Score</div>
+                    <div class="stat-value">${stats.avgScore}/100</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Best Day Score</div>
+                    <div class="stat-value">${stats.bestDay.score}/100</div>
+                </div>
+            `;
+        }
+
+        // Get leaderboard data
+        function getLeaderboardData() {
+            const sortedStats = [...weeklyStats]
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 7)
+                .sort((a, b) => b.score - a.score); // Sort by score descending
+
+            return sortedStats.map(day => ({
+                date: new Date(day.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+                score: day.score,
+                focus: formatTime(day.focus),
+                procrastination: formatTime(day.procrastination)
+            }));
+        }
+
+        function getScoreClass(score) {
+            if (score >= 90) return 'score-excellent';
+            if (score >= 75) return 'score-good';
+            if (score >= 60) return 'score-okay';
+            if (score >= 40) return 'score-poor';
+            return 'score-bad';
+        }
+
+        function getRankMedal(rank) {
+            if (rank === 1) return '<span class="rank gold">🥇</span>';
+            if (rank === 2) return '<span class="rank silver">🥈</span>';
+            if (rank === 3) return '<span class="rank bronze">🥉</span>';
+            return `<span class="rank">${rank}</span>`;
+        }
+
+        // Display leaderboard
+        const leaderboardData = getLeaderboardData();
+        
+        if (leaderboardData.length === 0) {
+            leaderboardBody.innerHTML = '<div class="no-data">No data yet. Complete some focus sessions to see your stats!</div>';
+        } else {
+            leaderboardBody.innerHTML = leaderboardData.map((day, index) => `
+                <div class="leaderboard-row">
+                    <div>${getRankMedal(index + 1)}</div>
+                    <div>${day.date}</div>
+                    <div><span class="score-badge ${getScoreClass(day.score)}">${day.score}/100</span></div>
+                    <div>${day.focus}</div>
+                    <div>${day.procrastination}</div>
+                </div>
+            `).join('');
+        }
+
+        // Navigation
+        if (isElectron()) {
+            const { ipcRenderer } = require("electron");
+            backBtn.addEventListener("click", () => {
+                ipcRenderer.send("navigate", "index.html");
+            });
+        } else {
+            backBtn.addEventListener("click", () => {
+                window.location.href = "index.html";
+            });
+        }
+    </script>
+</body>
+</html>
