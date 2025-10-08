@@ -10,13 +10,21 @@
             margin: 2rem auto;
         }
 
-        .back-btn {
-            background: #4cafef;
-            margin-bottom: 2rem;
+        .back-button {
+            margin-top: 20px;
+            background-color: #ff6f61;
+            color: white;
+            border: none;
+            padding: 20rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.1s ease, background 0.3s ease;
         }
 
-        .back-btn:hover {
-            background: #3a9dd9;
+        .back-button:hover {
+            background-color: #ff856f;
+            transform: scale(1.05);
         }
 
         .leaderboard-header {
@@ -129,10 +137,9 @@
 </head>
 <body>
     <div class="leaderboard-container">
-        <button class="back-btn" id="backBtn">← Back to Timer</button>
         
         <div class="leaderboard-header">
-            <h1>📊 Your Leaderboard</h1>
+            <h1>Your Leaderboard</h1>
             <div class="current-streak" id="streakDisplay">🔥 0 Day Streak</div>
         </div>
 
@@ -154,6 +161,8 @@
                 <!-- Leaderboard rows will be inserted here -->
             </div>
         </div>
+
+        <button class="back-btn" id="backBtn">Back to Timer</button>
     </div>
 
     <script>

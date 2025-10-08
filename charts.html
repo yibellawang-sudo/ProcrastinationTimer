@@ -14,33 +14,48 @@
             justify-content: flex-start;
             min-height: 100vh;
             margin: 0;
-            padding: 1rem
+            padding: 1rem;
         }
 
-        h1,h2 {
+        h1 {
             margin-bottom: 20px;
             color: #ff6f61;
             text-align: center;
             font-size: clamp(1.5rem, 3vw, 2.5rem);
         }
 
-        .chart-container{
+        h2 {
+            margin-bottom: 20px;
+            color: #ff6f61;
+            text-align: center;
+            font-size: clamp(1.2rem, 2.5vw, 2rem);
+        }
+
+        .charts-wrapper {
+            padding-top: 5%;
+            display: flex;
+            flex-direction: row;
+            gap: 2rem;
+            width: 100%;
+            max-width: 1800px;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
             background: white;
             border-radius: 1rem;
             box-shadow: 0 0.5rem 1.25rem rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 900px;
+            flex: 1;
             padding: 1rem;
-            margin-bottom: 2rem;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+
         canvas {
             background: white;
             border-radius: 20px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            max-width: 800px;
             width: 100% !important;
             height: 50vh !important;
             max-height: 500px;
@@ -58,9 +73,16 @@
             font-size: 1rem;
             transition: transform 0.1s ease, background 0.3s ease;
         }
+
         button:hover {
             background-color: #ff856f;
             transform: scale(1.05);
+        }
+
+        @media (max-width: 1024px) {
+            .charts-wrapper {
+                flex-direction: column;
+            }
         }
 
         @media (max-width: 600px) {
@@ -75,14 +97,17 @@
 </head>
 <body>
     <h1>Weekly Focus vs Procrastination</h1>
-    <div class="chart-container">
-        <h2>Focus vs Procrastination</h2>
-        <canvas id="weeklyChart"></canvas>
-     </div>
+    
+    <div class="charts-wrapper">
+        <div class="chart-container">
+            <h2>Focus vs Procrastination</h2>
+            <canvas id="weeklyChart"></canvas>
+        </div>
 
-    <div class="chart-container">
-        <h2>Average Time Until First Pause</h2>
-        <canvas id="pauseChart"></canvas>
+        <div class="chart-container">
+            <h2>Average Time Until First Pause</h2>
+            <canvas id="pauseChart"></canvas>
+        </div>
     </div>
 
     <button id="backBtn">Back to Timer</button>
@@ -114,13 +139,14 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true,
                         title: {display: true, text: 'Time (minutes)'}
                     },
                     x: {
-                        title: {display: true,text: 'Date'}
+                        title: {display: true, text: 'Date'}
                     }
                 },
                 plugins: {
@@ -140,10 +166,10 @@
         sessionHistory.forEach(session => {
             if (session.firstPause) {
                 const date = session.date.split('T')[0];
-                if (!pauseData[day]) pauseData[day] = [];
-                pauseData[day].push(session.firstPause);
+                if (!pauseData[date]) pauseData[date] = [];
+                pauseData[date].push(session.firstPause);
             }
-        })
+        });
 
         const pauseLabels = Object.keys(pauseData);
         const avgPauseTimes = pauseLabels.map(day => {
@@ -167,21 +193,21 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: { position: 'top' },
-                    title: { display: true, text: 'Average Time Until zfirst Time'}
+                    title: { display: true, text: 'Average Time Until First Pause'}
                 },
                 scales: {
                     y: { beginAtZero: true, title: {display: true, text: 'Time (minutes)'} },
                     x: { title: {display: true, text: 'Date'}}
                 }
             }
-        
         });
+        
         document.getElementById('backBtn').addEventListener('click', () => {
-        window.location.href = 'index.html'; 
-    });
-  </script>
-
+            window.location.href = 'index.html'; 
+        });
+    </script>
 </body>
 </html>

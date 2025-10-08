@@ -235,26 +235,28 @@ function checkMilestones() {
   }
 }
 
-// AVATAR MOTION
+// AVATAR MOTION - Seamless looping version
 function startWalking() {
   if (walkInterval) return;
   
   avatar.src = "foxWalking.gif";
   
-  // Start from right side of screen (relative to viewport width)
-  let avatarX = window.innerWidth * 0.1; // starts at 10vw from right
-  avatar.style.transform = `translateX(${avatarX}px)`;
+  // Get current position to start from wherever avatar currently is
+  const currentRect = avatar.getBoundingClientRect();
+  let avatarX = currentRect.left; // Start from current left position
   
   walkInterval = setInterval(() => {
     avatarX -= 3; // move left
     
-    // When it goes completely off the left side (width of avatar is 120px)
-    if (avatarX < -120) {
-      // Reset to right side of viewport
-      avatarX = window.innerWidth + 120;
+    // When avatar goes completely off the LEFT side
+    if (avatarX < -120) { // avatar width is 120px
+      // Teleport to RIGHT side
+      avatarX = window.innerWidth;
     }
     
-    avatar.style.transform = `translateX(${avatarX}px)`;
+    // Use absolute positioning with left instead of transform
+    avatar.style.left = avatarX + "px";
+    avatar.style.right = "auto"; // Override CSS right positioning
   }, 30);
 }
 
@@ -264,7 +266,7 @@ function pauseWalkingAndSetSad() {
     walkInterval = null;
   }
   avatar.src = "foxSad.gif";
-  avatar.style.transform = "translateX(0)"; // return to starting position
+  // Don't change position - freeze where it is
 }
 
 function stopWalkingAndSetNeutral() {
@@ -273,7 +275,7 @@ function stopWalkingAndSetNeutral() {
     walkInterval = null;
   }
   avatar.src = "foxNeutral.png";
-  avatar.style.transform = "translateX(0)"; // return to starting position
+  // Don't change position - freeze where it is
 }
 
 // TIMERS
@@ -401,7 +403,7 @@ if (isElectron()) {
   const { ipcRenderer } = require("electron");
   
   milestonesBtn.addEventListener("click", () => {
-    ipcRenderer.send("navigate", "milestones.html");
+    ipcRenderer.send("navigate", "milestone.html");
   });
   
   chartsBtn.addEventListener("click", () => {
@@ -413,7 +415,7 @@ if (isElectron()) {
       ipcRenderer.send("navigate", "leaderboard.html");
     });
   }
-  
+
   focusModeBtn.addEventListener("click", () => {
     ipcRenderer.send("toggle-focus-mode", true);
   });
@@ -424,18 +426,16 @@ if (isElectron()) {
   });
 } else {
   milestonesBtn.addEventListener("click", () => {
-    window.location.href = "milestones.html";
+    window.location.href = "milestone.html";
   });
   
   chartsBtn.addEventListener("click", () => {
     window.location.href = "charts.html";
   });
   
-  if (leaderboardBtn) {
-    leaderboardBtn.addEventListener("click", () => {
+  leaderboardBtn.addEventListener("click", () => {
       window.location.href = "leaderboard.html";
     });
-  }
   
   focusModeBtn.addEventListener("click", () => {
     alert("Focus Mode only works in the desktop app!");
@@ -444,3 +444,31 @@ if (isElectron()) {
 
 // Initial display update
 updateDisplays();
+
+window.addEventListener('DOMContentLoaded', () => {
+  const avatar = document.getElementById("avatar");
+  if (avatar) {
+    // Force clear any transforms
+    avatar.style.transform = "";
+    
+    setTimeout(() => {
+      const rect = avatar.getBoundingClientRect();
+      const computedStyle = window.getComputedStyle(avatar);
+      
+      console.log("=== AVATAR POSITION ON PAGE LOAD ===");
+      console.log("Window width:", window.innerWidth);
+      console.log("Avatar left position:", rect.left);
+      console.log("Avatar right position:", rect.right);
+      console.log("Expected position (from right edge):", window.innerWidth - rect.right, "pixels from right");
+      console.log("CSS right value:", computedStyle.right);
+      console.log("CSS position:", computedStyle.position);
+      console.log("CSS transform:", computedStyle.transform);
+      
+      // Where should it be?
+      const expectedLeft = window.innerWidth - 120 + 50; // screen width - avatar width + 50px offset
+      console.log("Expected left position:", expectedLeft);
+      console.log("Actual left position:", rect.left);
+      console.log("Difference:", Math.abs(expectedLeft - rect.left), "pixels off");
+    }, 100);
+  }
+});

@@ -96,8 +96,8 @@ body {
 
 #avatar {
   position: fixed;
-  bottom: 5vh;
-  right: 10vw;
+  bottom: 27vh;
+  right: 35vw;
   width: 120px;
   height: 120px;
   object-fit: contain;
