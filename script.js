@@ -201,7 +201,6 @@ function setProgress(percent) {
 function updateDisplays() {
   timerDisplay.textContent = formatTime(stopwatchSeconds);
   
-  // Send timer update to focus window
   if (isElectron()) {
     const { ipcRenderer } = require("electron");
     ipcRenderer.send("timer-update", { 

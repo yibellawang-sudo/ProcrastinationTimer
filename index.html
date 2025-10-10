@@ -4,70 +4,386 @@
     <meta charset="UTF-8">
     <title>Procrastination Timer</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+
+      body{
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Main layout */
+      .app-container {
+          position: relative;
+          z-index: 1;
+          min-height: 100vh;
+          display: grid;
+          grid-template-columns: 1fr 2fr 1fr;
+          grid-template-rows: auto 1fr auto;
+          gap: 2rem;
+          padding: 2rem;
+      }
+
+      .header {
+        grid-column: 1 / -1;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        color: white;
+        margin: 0;
+        text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        animation: slideDown 0.6s ease-out;
+      }
+      @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      /*left side bar, stats*/
+      .stats-panel {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        animation: slideInLeft 0.6s ease-out;
+      }
+      @keyframes slideInlEft {
+        from { opacity: 0; transform: translateX(-50px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+
+      .stats-card {
+        background: linear-gradient(135deg, #fdbdb8, #ff856f);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(255, 111, 97, 0.3);
+      }
+
+      .stats-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin-bottom: 0.5rem;
+      }
+      .stat-value {
+        font-size: 1.8rem;
+        font-weight: bold;
+      }
+
+      .streak-badge {
+        background: linear-gradient(135deg, #ff6f61, #ff856f);
+        color: white;
+        padding: 1rem;
+        border-radius: 15px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        box-shadow: 0 4px 15px rgba(255, 111, 97, 0.3);
+        text-align: center;
+      }
+
+      /*center, timer*/
+      .timer-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        animation: fadeIn 0.8s ease-out;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+      }
+
+      .timer-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        min-width: 400px;
+      }
+      .timer-ring-wrapper {
+        width: 280px;
+        height: 280px;
+        margin: 0 auto 2rem;
+        position: relative;
+      }
+      .timer-ring {
+        width: 100%;
+        height: 100%;
+      }
+      
+      .ring-bg {
+        fill: none;
+        stroke: #eee;
+        stroke-width: 10;
+      }
+      .ring-progress {
+        fill: none;
+        stroke: url(#gradient);
+        stroke-width: 10;
+        stroke-linecap: round;
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+        transition: stroke-dashoffset 0.3s ease;
+      }
+      #timer {
+        font-size: 3rem;
+        font-weight: bold;
+        fill: #ff6f61;
+      }
+
+      .session-input {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #eee;
+        border-radius: 15px;
+        font-size: 1rem;
+        font-family: 'Poppons', sans-serif;
+        outline: none;
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+      }
+
+      .session-input:focus {
+        border-color: #ff6f61;
+        box-shadow: 0 0 3px rgba(255, 111, 97, 0.3);
+      }
+
+      .control-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-bottom: 1rem;
+      }
+      .btn {
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 15px;
+        font-size: 1rem;
+        font-weight: 600;
+        font-family: 'Poppins', sans-serif;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-sizing: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, #ff6f61, #ff856f);
+        color: white;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 111, 97, 0.3);
+      }
+
+      .btn-secondary {
+        background: linear-gradient(135deg, #ffecd2, #ea9586);
+        color: white;
+      }
+      .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 111, 97, 0.3);
+      }
+
+      .btn-tertiary {
+        background: linear-gradient(135deg, #ff6f61, #ff856f);
+        color: white;
+      }
+      .btn-tertiary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 111, 97, 0.3);
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+      .roast-box {
+          background: linear-gradient(135deg, #ffecd2, #fcb69f);
+          padding: 1.5rem;
+          border-radius: 15px;
+          border-left: 5px solid #ff6f61;
+          font-style: italic;
+          color: #333;
+          min-height: 60px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+      }
+      /*right side, navigation*/
+      .nav-panel {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        animation: slideInRight 0.6s ease-out;
+      }
+      @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(50px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+
+      .nav-panel h3{
+        color: #ff6f61;
+        margin: 0 0 1rem 0;
+        text-align: center;
+      }
+      .nav-btn{
+        background: white;
+        border: 2px solid #ff6f61;
+        color: #ff6f61;
+        padding: 1rem;
+        border-radius: 15px;
+        font-size: 1rem;
+        font-weight: 600;
+        font-family: 'Poppins', sans-serif;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align: center;
+        justify-content: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      .nav-btn:hover {
+        background: #ff6f61;
+        color: white;
+        transform: translateY(5px);
+        box-shadow: 0 6px 20px rgba(255, 111, 97, 0.3);
+      }
+
+      .nav-btn::before {
+        content: "➡";
+        font-size: 1.2rem;
+      }
+      /* Avatar */
+      #avatar {
+        position: fixed;
+        bottom: 5vh;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+        z-index: 50;
+        filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));
+        pointer-events: none;
+      }
+
+      @media (max-width: 1200px) {
+        .app-container {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto auto auto auto;
+        }
+        .stats-panel, .nav-panel {
+            grid-column: 1;
+        }
+        .timer-container {
+            min-width: auto;
+            width: 100%;
+            max-width: 600px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .control-btns {
+            flex-direction: column;
+        }
+        .timer-ring-wrapper {
+            width: 220px;
+            height: 220px;
+        }
+        #timer {
+          font-size: 2rem;
+        }
+      }
+    </style>
 </head>
 <body>
-    <h1>Procrastination Timer</h1>
-    <div class="cumulative-stats">
-      <div id="focusTime">Cumulative Focus: 00:00</div>
-      <div id="procrastinationTime">Cumulative Procrastination: 00:00 (0% focused)</div>
+
+  <div class="app-container">
+    <div class="header">
+       <h1>Procrastination Timer</h1>
+    </div>
+    
+    <div class="stats-panel">
+      <h3>Today's Stats</h3>
+
+      <div class="stats-card">
+        <div class="stats-label">Focus Time</div>
+        <div class="stat-value" id="focusTime">00:00</div>
+      </div>
+
+      <div class="stats-card">
+        <div class="stats-label">Procrastination Time</div>
+        <div class="stat-value" id="procrastinationTime">00:00</div>
+      </div>
+
+      <div class="stats-card">
+        <div class="stats-label">Focus Percentage</div>
+        <div class="stat-value" id="focusPercentage">0%</div>
+      </div>
+
+      <div class="streak-badge" id="streakBadge">🔥 0 Day Streak</div>
     </div>
 
-    <div class="container">
+    <!-- Timer Section -->
+    <div class="timer-container">
+      <div class="timer-container">
+        <div class="timer-ring-wrapper">
+          <svg class="timer-ring" viewBox="0 0 100 100">
+            <defs>
+              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color: #ff6f61; stop-opacity: 1"/>
+                <stop offset="100%" style="stop-color: #ff6f61; stop-opacity: 1"/>
+              </linearGradient>
+            </defs>
+            <circle class="ring-bg" cx="50" cy="50" r="45" />
+            <circle id="progress-ring-circle" class="ring-progress" cx="50" cy="50" r=45 />
+            <text id="timer" x="50" y="55" text-anchor="middle" dominant-baseline="middle">00:00</text>
+          </svg>        
+        </div>
 
-    <div class="timer-wrapper">
-    <svg class="timer-ring" viewBox="0 0 100 100">
-      <!-- Background ring -->
-      <circle
-        class="ring-bg"
-        cx="50"
-        cy="50"
-        r="45"
-      />
-      <!-- Progress ring -->
-      <circle
-        id="progress-ring-circle"
-        class="ring-progress"
-        cx="50"
-        cy="50"
-        r="45"
-      />
-      <!-- Timer text -->
-      <text
-        id="timer"
-        x="50"
-        y="50"
-        text-anchor="middle"
-        dominant-baseline="middle"
-      >00:00</text>
-      </svg>
+        <input type="text" id="sessionName" class="session-input" placeholder="Pls enter session name here!" />
+
+        <div class="control-btns">
+          <button id="startBtn" class="btn btn-primary">Start</button>
+          <button id="pauseBtn" class="btn btn-secondary" disabled>Pause</button>
+          <button id="stopBtn" class="btn btn-secondary" disabled>Stop</button>
+        </div>
+        <div class="roast-box" id="roast">Ready to focus? Lets go!</div>
+      </div>
     </div>
 
-    <div id="roast"></div>
-   
-    <!-- Session name input -->
-    <input type="text" id="sessionName" placeholder="Enter session name" />
-
-    <div class="buttons">
-      <button id="startBtn">Start</button>
-      <button id="pauseBtn">Pause</button>
-      <button id="stopBtn">Stop</button>
-      <button id="milestonesBtn">Milestones</button>
-      <button id="chartsBtn">Charts</button>
-      <button id="focusModeBtn">Focus Mode</button>
-      <button id="leaderboardBtn">Leaderboards</button>
-
+    <!--right side nav-->
+    <div class="nav-panel">
+      <button id="milestonesBtn" class="nav-btn">Milestones</button>
+      <button id="chartsBtn" class="nav-btn">Charts</button>
+      <button id="focusModeBtn" class="nav-btn">Focus Mode</button>
+      <button id="leaderboardBtn" class="nav-btn">Leaderboards</button>
     </div>
+    
+    <img id="avatar" src="foxNeutral.png" alt="avatar" />
 
-    <!-- Streak display -->
-    <div id="streakDiv"></div>
     <audio id="startSound" src="start.mp3"></audio>
-    <audio id="pauseSound" src="airHorn.mp3"></audio>
-    <audio id="stopSound" src="ding.mp3"></audio>
+    <audio id="pauseSound" src="pause.mp3"></audio>
+    <audio id="stopSound" src="stop.mp3"></audio>
 
-  </div>
- <img id="avatar" src="foxNeutral.png" alt="avatar" />
- 
-  <canvas id="weeklyChart"></canvas>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script src="script.js"></script>
