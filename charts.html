@@ -4,113 +4,34 @@
     <meta charset="UTF-8">
     <title>Weekly Stats</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #ffecd2, #fcb69f);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            min-height: 100vh;
-            margin: 0;
-            padding: 1rem;
-        }
-
-        h1 {
-            margin-bottom: 20px;
-            color: #ff6f61;
-            text-align: center;
-            font-size: clamp(1.5rem, 3vw, 2.5rem);
-        }
-
-        h2 {
-            margin-bottom: 20px;
-            color: #ff6f61;
-            text-align: center;
-            font-size: clamp(1.2rem, 2.5vw, 2rem);
-        }
-
-        .charts-wrapper {
-            padding-top: 5%;
-            display: flex;
-            flex-direction: row;
-            gap: 2rem;
-            width: 100%;
-            max-width: 1800px;
-            margin-bottom: 2rem;
-        }
-
-        .chart-container {
-            background: white;
-            border-radius: 1rem;
-            box-shadow: 0 0.5rem 1.25rem rgba(0,0,0,0.1);
-            flex: 1;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        canvas {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            width: 100% !important;
-            height: 50vh !important;
-            max-height: 500px;
-            padding: 20px;
-        }
-
-        button {
-            margin-top: 20px;
-            background-color: #ff6f61;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: transform 0.1s ease, background 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #ff856f;
-            transform: scale(1.05);
-        }
-
-        @media (max-width: 1024px) {
-            .charts-wrapper {
-                flex-direction: column;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .chart-container {
-                padding: 0.5rem;
-            }
-            canvas {
-                height: 35vh !important;
-            }
-        }
-    </style>
 </head>
 <body>
+    <div class="falling-leaves">
+        <div class="leaf-fall" style="left: 10%; animation-delay: 0s;">🍂</div>
+        <div class="leaf-fall" style="left: 30%; animation-delay: 3s;">🍁</div>
+        <div class="leaf-fall" style="left: 50%; animation-delay: 6s;">🍂</div>
+        <div class="leaf-fall" style="left: 70%; animation-delay: 2s;">🍁</div>
+        <div class="leaf-fall" style="left: 85%; animation-delay: 8s;">🍂</div>
+    </div>
+
     <h1>Weekly Focus vs Procrastination</h1>
     
     <div class="charts-wrapper">
-        <div class="chart-container">
-            <h2>Focus vs Procrastination</h2>
-            <canvas id="weeklyChart"></canvas>
+        <div class="scrapbook-page">
+            <div class="chart-container">
+                <h2>Focus vs Procrastination</h2>
+                <canvas id="weeklyChart"></canvas>
+            </div>
         </div>
-
-        <div class="chart-container">
-            <h2>Average Time Until First Pause</h2>
-            <canvas id="pauseChart"></canvas>
+        <div class="scrapbook-page">
+            <div class="chart-container">
+                <h2>Average Time Until First Pause</h2>
+                <canvas id="pauseChart"></canvas>
+            </div>
         </div>
     </div>
 
-    <button id="backBtn">Back to Timer</button>
+    <button onclick="window.location.href='index.html'">⬅ Back</button>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -128,12 +49,12 @@
                     {
                         label: 'Focus Time (mins)',
                         data: focusData,
-                        backgroundColor: '#4cafef',
+                        backgroundColor: '#ffb366',
                     },
                     {
                         label: 'Procrastination Time (mins)',
                         data: procrastinationData,
-                        backgroundColor: '#ff6f61',
+                        backgroundColor: '#d17842',
                     }
                 ]
             },
@@ -185,7 +106,7 @@
                 datasets: [{
                     label: 'Avg Time to First Pause (mins)',
                     data: avgPauseTimes,
-                    borderColor: '#ff6f61',
+                    borderColor: '#d17842',
                     backgroundColor: 'rgba(255, 111, 97, 0.3)',
                     tension: 0.3,
                     fill: true,

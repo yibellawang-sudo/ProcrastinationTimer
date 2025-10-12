@@ -5,73 +5,14 @@
     <title>Leaderboard - Procrastination Timer</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Caveat:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap');
-      
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #f5e6d3;
-            position: relative;
-            overflow-x: hidden;
-            min-height: 100vh;
-            background-image: 
-                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a574' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-            padding: 2rem;
-        }
-
-        .falling-leaves {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 100;
-        }
-
-        .leaf-fall {
-            position: absolute;
-            font-size: 40px;
-            animation: fall 12s infinite ease-in-out;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        @keyframes fall {
-            0% { top: -10%; opacity: 0; transform: translateX(0) rotate(0deg); }
-            10% { opacity: 1; }
-            50% { transform: translateX(100px) rotate(180deg); }
-            90% { opacity: 1; }
-            100% { top: 110%; opacity: 0; transform: translateX(-50px) rotate(360deg); }
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-
         .header {
             text-align: center;
             margin-bottom: 2rem;
         }
 
-        h1 {
-            font-family: 'Caveat', cursive;
-            font-size: clamp(3rem, 7vw, 5rem);
-            color: #d17842;
-            text-shadow:
-                3px 3px 0 #8b5a3c,
-                6px 6px 0 rgba(0, 0, 0, 0.1);
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
         .streak-badge {
             display: inline-block;
-            background: linear-gradient(135deg, #d17842, #f5e6d3);
+            background: linear-gradient(135deg, #ff9d5c, #ffb366);
             font-family: 'Fredoka', sans-serif;
             font-size: 1.8rem;
             text-align: center;
@@ -85,48 +26,14 @@
                 0 8px 20px rgba(255, 157, 92, 0.5),
                 inset 0 -4px 8px rgba(0, 0, 0, 0.2);
             margin-top: 1rem;
+            animation: pulse 2s infinite ease-in-out;
         }
-
-        .back-button {
-            display: block;
-            margin-top: 3rem auto 0;
-            background: linear-gradient(135deg, #d17842, #f5e6d3);
-            color: white;
-            box-shadow: 
-                0 8px 0 rgba(0, 0, 0, 0.2),
-                0 8px 20px rgba(0, 0, 0, 0.15);
-            border: none;
-            padding: 1.2rem 2.5rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 700;
-            font-family: 'Fredoka', sans-serif;
-            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            border: 3px solid rgba(255, 255, 255, 0.3);
+        @keyframes pulse {
+            0%, 100% {transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
-
-        .back-button:hover {
-            transform: translateY(-8px) scale(1.05);
-            box-shadow: 0 16px 0 rgba(0,0,0,0.2), 0 16px 30px rgba(0,0,0,0.2);
-        }
-
-/*
-        .current-streak {
-            display: inline-block;
-            background: linear-gradient(135deg, #ff6f61, #ff856f);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 15px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(255, 111, 97, 0.3);
-            margin: 1rem 0;
-        } */
 
         .leaderboard-table {
-            width: 100%;
             background: rgba(255, 255, 255, 0.9);
             border-radius: 15px;
             overflow: hidden;
@@ -147,7 +54,7 @@
         }
 
         .leaderboard-row.header {
-            background: linear-gradient(135deg, #d17842, #f5e6d3);
+            background: linear-gradient(135deg, #ff9d5c, #ffb366);
             color: white;
             font-weight: bold;
             font-size: 0.9rem;
@@ -156,7 +63,7 @@
         }
 
         .leaderboard-row.header:hover {
-            background: linear-gradient(135deg, #d17842, #f5e6d3);
+            background: linear-gradient(135deg, #ff9d5c, #ffb366);
         }
 
         .rank {
@@ -165,9 +72,14 @@
             text-align: center;
         }
 
-        .rank.gold { color: #ffd700; }
-        .rank.silver { color: #c0c0c0; }
-        .rank.bronze { color: #cd7f32; }
+        .rank.gold { color: #ffd700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); animation: shin2s infinite; }
+        .rank.silver { color: #c0c0c0; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); }
+        .rank.bronze { color: #cd7f32; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); }
+
+        @keyframes shine {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
 
         .score-badge {
             display: inline-block;
@@ -189,7 +101,7 @@
             text-align: center;
             padding: 3rem;
             color: #999;
-            font-style: italic;
+            font-family: 'Caveat', cursive;
         }
 
         .summary-stats {
@@ -198,133 +110,6 @@
             gap: 1rem;
             margin-bottom: 2rem;
         }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 
-                0 4px 12px rgba(0,0,0,0.1),
-                inset 0 0 0 1px rgba(0, 0, 0, 0.05);
-            border-radius: 15px;
-            border: 1px solid #eee;
-            transform: rotate(-1deg);
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            position: relative;
-            animation: appear 0.6s ease-out backwards;
-        }
-        @keyframes appear {
-            0% { opacity: 0; transform: rotate(-1deg) translateY(30px); }
-            100% { opacity: 1; transform: rotate(-1deg) translateY(0); }
-        }
-
-        .stat-card:nth-child(2) {
-            transform: rotate(1deg);
-            animation-delay: 0.1s;
-        }
-
-        .stat-card:nth-child(3) {
-            transform: rotate(-0.5deg);
-            animation-delay: 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: rotate(0deg) translateY(-10px) scale(1.05);
-            box-shadow:    
-                0 15px 30px rgba(0, 0, 0, 0.25),
-                0 0 15px rgba(255, 157, 92, 0.3);
-            z-index: 10;
-        }
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: -8px;
-            right: 20px;
-            font-size: 1.5rem;
-            transform: rotate(45deg);
-            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
-        }
-
-        .stat-label {
-            font-family: 'Caveat', cursive;
-            font-size: 1rem;
-            color: #666;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
-        .stat-value {
-            font-family: 'Fredoka', sans-serif;
-            font-size: 2rem;
-            font-weight: bold;
-            color: #d17842;
-            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
-        }
-
-        .scrapbook-page {
-            background: #fffef7;
-            border-radius: 0;
-            padding: 2.5rem;
-            box-shadow: 
-            0 2px 8px rgba(0,0,0,0.1),
-            inset 0 0 0 1px rgba(139,90,60,0.1),
-            8px 8px 0 rgba(209,120,66,0.15);
-            position: relative;
-            animation: pflip 1s ease-out backwards;
-            border: 2px solid #e6d5c3;
-            transform-origin: left center;
-        }
-
-        @keyframes pflip {
-            0% { transform: perspective(1000px) rotateY(-90deg); opacity: 0; }
-            100% { transform: perspective(1000px) rotateY(0deg); opacity: 1; }
-        }
-
-        .scrapbook-page::before {
-            content: '';
-            position: absolute;
-            top: -15px;
-            left: 15%;
-            width: 120px;
-            height: 30px;
-            background: repeating-linear-gradient(
-            45deg,
-            rgba(209,120,66,0.8),
-            rgba(209,120,66,0.8) 10px,
-            rgba(255,157,92,0.8) 10px,
-            rgba(255,157,92,0.8) 20px
-            );
-            border-radius: 3px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transform: rotate(-3deg);
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 2rem;
-            font-family: 'Caveat', cursive;
-            color: #d17842;
-            font-size: 2.5rem;
-            font-weight: 700;
-            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.05);
-        }
-        @media (max-width: 750px) {
-            body {
-                padding: 1rem;
-            }
-            .leaderboard-row {
-                grid-template-columns: 60px 2fr 1fr 1fr 1fr;
-                padding: 1rem;
-                font-size: 1rem;
-            }
-            .rank {
-                font-size: 1.5rem;
-            }
-            .scrapbook-page {
-                padding: 1.5rem;
-            }
-        }
-
     </style>
 </head>
 <body>
@@ -336,7 +121,6 @@
         <div class="leaf-fall" style="left: 85%; animation-delay: 8s;">🍂</div>
     </div>
     <div class="container">
-        
         <div class="header">
             <h1>Your Leaderboard</h1>
             <div class="current-streak" id="streakDisplay">🔥 0 Day Streak</div>
@@ -360,7 +144,7 @@
             </div>
         </div>
 
-        <button class="back-button" id="backBtn">Back to Timer</button>
+        <button onclick="window.location.href='index.html'">⬅ Back</button>
     </div>
 
     <script>
@@ -480,3 +264,4 @@
     </script>
 </body>
 </html>
+
