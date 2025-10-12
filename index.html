@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Procrastination Timer</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Caveat:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap');
+      
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Poppins', sans-serif;
+        background: #f5e6d3;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+        background-image: 
+          url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a574' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      }
+
+      .doodles {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .falling-leaves {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 100;
+      }
+
+      .leaf-fall {
+        position: absolute;
+        font-size: 40px;
+        animation: fall 12s infinite ease-in-out;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      @keyframes fall {
+        0% { top: -10%; opacity: 0; transform: translateX(0) rotate(0deg); }
+        10% { opacity: 1; }
+        50% { transform: translateX(100px) rotate(180deg); }
+        90% { opacity: 1; }
+        100% { top: 110%; opacity: 0; transform: translateX(-50px) rotate(360deg); }
+      }
+
+      .paw-trail {
+        position: absolute;
+        font-size: 30px;
+        animation: paw-walk 20s infinite linear;
+        opacity: 0;
+      }
+
+      @keyframes paw-walk {
+        0% {
+          left: -5%;
+          bottom: 20%;
+          opacity: 0;
+          transform: scale(0.5) rotate(-20deg);
+        }
+        5% {
+          opacity: 0.6;
+        }
+        50% {
+          bottom: 25%;
+          transform: scale(1) rotate(10deg);
+        }
+        95% {
+          opacity: 0.6;
+        }
+        100% {
+          left: 105%;
+          bottom: 22%;
+          opacity: 0;
+          transform: scale(0.5) rotate(40deg);
+        }
+      }
+
+      .sparkle {
+        position: fixed;
+        pointer-events: none;
+        animation: sparkle-pop 1s ease-out forwards;
+      }
+
+      @keyframes sparkle-pop {
+        0% {
+          transform: scale(0) rotate(0deg);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.5) rotate(180deg);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(0) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      /* Main container */
+      .app-container {
+        position: relative;
+        z-index: 1;
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 0.5fr 1fr 0.5fr;
+        grid-template-rows: auto 1fr;
+        gap: 2rem;
+        padding: 2rem;
+      }
+
+      /* Header */
+      .header {
+        grid-column: 1 / -1;
+        text-align: center;
+        position: relative;
+        margin-bottom: 1rem;
+      }
+
+      .header h1 {
+        font-family: 'Caveat', cursive;
+        font-size: clamp(3rem, 7vw, 5rem);
+        color: #d17842;
+        text-shadow: 
+          3px 3px 0 #8b5a3c,
+          6px 6px 0 rgba(0,0,0,0.1);
+        position: relative;
+        display: inline-block;
+        font-weight: 700;
+      }
+
+      .header h1::before {
+        content: '🦊';
+        position: absolute;
+        left: -80px;
+        top: -10px;
+        font-size: 4rem;
+      }
+
+      .header h1::after {
+        content: '📝';
+        position: absolute;
+        right: -80px;
+        top: -10px;
+        font-size: 4rem;
+      }
+
+      .scrapbook-page {
+        background: #fffef7;
+        border-radius: 0;
+        padding: 2.5rem;
+        box-shadow: 
+          0 2px 8px rgba(0,0,0,0.1),
+          inset 0 0 0 1px rgba(139,90,60,0.1),
+          8px 8px 0 rgba(209,120,66,0.15);
+        position: relative;
+        animation: pflip 1s ease-out backwards;
+        border: 2px solid #e6d5c3;
+        transform-origin: left center;
+      }
+
+      @keyframes pflip {
+        0% { transform: perspective(1000px) rotateY(-90deg); opacity: 0; }
+        100% { transform: perspective(1000px) rotateY(0deg); opacity: 1; }
+      }
+
+      .stats-panel {
+        animation-delay: 0.2s;
+        transform: rotate(1deg);
+      }
+
+      .timer-section {
+        animation-delay: 0.4s;
+        transform: rotate(-0.5deg);
+      }
+
+      .nav-panel {
+        animation-delay: 0.6s;
+        transform: rotate(1.5deg);
+      }
+
+      /* Washi tape */
+      .scrapbook-page::before {
+        content: '';
+        position: absolute;
+        top: -15px;
+        left: 15%;
+        width: 120px;
+        height: 30px;
+        background: repeating-linear-gradient(
+          45deg,
+          rgba(209,120,66,0.8),
+          rgba(209,120,66,0.8) 10px,
+          rgba(255,157,92,0.8) 10px,
+          rgba(255,157,92,0.8) 20px
+        );
+        border-radius: 3px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        transform: rotate(-3deg);
+      }
+
+      /* Polaroid cards */
+      .stat-polaroid {
+        background: white;
+        padding: 1rem;
+        padding-bottom: 2.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 
+          0 4px 12px rgba(0,0,0,0.15),
+          inset 0 0 0 1px rgba(0,0,0,0.05);
+        transform: rotate(-2deg);
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        border: 1px solid #e0e0e0;
+        animation: photo-develop 0.8s ease-out backwards;
+      }
+
+      @keyframes photo-develop {
+        0% {
+          opacity: 0;
+          filter: blur(10px) brightness(2);
+          transform: scale(0.8) rotate(-10deg);
+        }
+        100% {
+          opacity: 1;
+          filter: blur(0) brightness(1);
+          transform: scale(1) rotate(-2deg);
+        }
+      }
+
+      .stat-polaroid:nth-child(2) {
+        animation-delay: 0.3s;
+      }
+
+      .stat-polaroid:nth-child(3) {
+        animation-delay: 0.6s;
+      }
+
+      .stat-polaroid:hover {
+        transform: rotate(0deg) translateY(-15px) scale(1.08);
+        box-shadow: 
+          0 20px 40px rgba(0,0,0,0.3),
+          0 0 20px rgba(255,157,92,0.4);
+        z-index: 10;
+      }
+
+      .stat-polaroid:nth-child(even) {
+        transform: rotate(2deg);
+      }
+
+      .stat-content {
+        background: linear-gradient(135deg, #ff9d5c 0%, #ffb366 100%);
+        padding: 2rem 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 0.8rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-polaroid:nth-child(2) .stat-content {
+        background: linear-gradient(135deg, #d17842 0%, #e89563 100%);
+      }
+
+      .stat-polaroid:nth-child(3) .stat-content {
+        background: linear-gradient(135deg, #8b5a3c 0%, #a67c52 100%);
+      }
+
+      .stat-label {
+        font-family: 'Caveat', cursive;
+        font-size: 2.3rem;
+        font-weight: 600;
+        color: rgba(255,255,255,0.95);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.3rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .stat-value {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 1.5rem;
+        color: white;
+        text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+        animation: number-pop 0.5s ease-out;
+      }
+
+      @keyframes number-pop {
+        0% {
+          transform: scale(0.5);
+          opacity: 0;
+        }
+        70% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .stat-polaroid::before {
+        content: '📌';
+        position: absolute;
+        top: -8px;
+        right: 20px;
+        font-size: 1.5rem;
+        transform: rotate(45deg);
+        filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+      }
+
+
+      /* Timer */
+      .timer-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        padding: 2rem;
+      }
+
+      .timer-ring-wrapper {
+        width: 500px;
+        height: 500px;
+        position: relative;
+      }
+
+      .timer-ring {
+        filter: drop-shadow(0 15px 35px rgba(209,120,66,0.4));
+      }
+
+      .ring-bg {
+        fill: none;
+        stroke: #e6d5c3;
+        stroke-width: 8;
+      }
+
+      .ring-progress {
+        fill: none;
+        stroke: url(#fox-gradient);
+        stroke-width: 9;
+        stroke-linecap: round;
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+        transition: stroke-dashoffset 0.5s ease;
+        filter: drop-shadow(0 0 12px rgba(209,120,66,0.6));
+      }
+
+      #timer {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 2rem;
+        fill: #d17842;
+        filter: drop-shadow(1px 1px 0 #8b5a3c);
+        font-weight: 600;
+        text-align: center;
+      }
+
+      /* Input */
+      .session-input {
+        width: 100%;
+        padding: 1.2rem 1.5rem;
+        border: 3px solid #d17842;
+        border-radius: 15px;
+        font-size: 1.3rem;
+        font-family: 'Caveat', cursive;
+        font-weight: 600;
+        outline: none;
+        background: white;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        position: relative;
+      }
+
+      .session-input:focus {
+        border-color: #ff9d5c;
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 
+          0 15px 30px rgba(255,157,92,0.4),
+          0 0 20px rgba(255,157,92,0.3);
+      }
+
+      .session-input::placeholder {
+        color: #c4a07a;
+      }
+
+      /* Buttons */
+      .control-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        padding: 1.2rem 2.5rem;
+        border: none;
+        border-radius: 50px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        font-family: 'Fredoka', sans-serif;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        box-shadow: 0 8px 0 rgba(0,0,0,0.2), 0 8px 20px rgba(0,0,0,0.15);
+        position: relative;
+        transform: translateY(0);
+        border: 3px solid rgba(255,255,255,0.3);
+      }
+
+      .btn:hover {
+        transform: translateY(-8px) scale(1.05);
+        box-shadow: 0 16px 0 rgba(0,0,0,0.2), 0 16px 30px rgba(0,0,0,0.2);
+      }
+
+      .btn:active {
+        transform: translateY(6px);
+        box-shadow: 0 2px 0 rgba(0,0,0,0.2), 0 2px 10px rgba(0,0,0,0.1);
+        animation: button-press 0.2s ease-out;
+      }
+
+      @keyframes button-press {
+        0% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(6px) scale(0.95); }
+        100% { transform: translateY(6px) scale(1); }
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #ff9d5c 0%, #ffb366 100%);
+        color: white;
+        text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+      }
+
+      .btn-secondary {
+        background: linear-gradient(135deg, #d17842 0%, #e89563 100%);
+        color: white;
+        text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+      }
+
+      .btn-tertiary {
+        background: linear-gradient(135deg, #8b5a3c 0%, #a67c52 100%);
+        color: white;
+        text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: translateY(0) !important;
+      }
+
+      /* ROAST BOX - THE STAR */
+      .roast-box {
+        background: #fffacd;
+        padding: 2.5rem;
+        border-radius: 0;
+        position: relative;
+        font-family: 'Caveat', cursive;
+        font-size: 2rem;
+        color: #d17842;
+        min-height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 
+          0 6px 12px rgba(0,0,0,0.2),
+          inset 0 -2px 4px rgba(0,0,0,0.05);
+        transform: rotate(-1deg);
+        font-weight: 700;
+        border-bottom: 3px solid rgba(0,0,0,0.05);
+        animation: note-appear 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) backwards;
+        text-align: center;
+        line-height: 1.4;
+      }
+
+      @keyframes note-appear {
+        0% {
+          transform: rotate(-1deg) scale(0) translateY(-50px);
+          opacity: 0;
+        }
+        70% {
+          transform: rotate(-1deg) scale(1.1) translateY(0);
+        }
+        100% {
+          transform: rotate(-1deg) scale(1) translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .roast-box::before {
+        content: '📎';
+        position: absolute;
+        top: -8px;
+        left: 20px;
+        font-size: 2rem;
+        transform: rotate(-15deg);
+      }
+
+      /* Nav buttons */
+      .nav-panel h3 {
+        font-family: 'Caveat', cursive;
+        color: #d17842;
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+        font-weight: 700;
+        text-shadow: 2px 2px 0 rgba(0,0,0,0.05);
+      }
+
+      .nav-btn {
+        background: white;
+        border: 3px solid #d17842;
+        color: #d17842;
+        padding: 1.2rem;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        font-family: 'Fredoka', sans-serif;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        position: relative;
+        margin-bottom: 1rem;
+        transform: rotate(-1deg);
+        box-shadow: 4px 4px 0 rgba(209,120,66,0.2);
+        overflow: hidden;
+      }
+
+      .nav-btn::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255,157,92,0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+      }
+
+      .nav-btn:hover::after {
+        width: 300px;
+        height: 300px;
+      }
+
+      .nav-btn:nth-child(even) {
+        transform: rotate(1deg);
+      }
+
+      .nav-btn:hover {
+        background: linear-gradient(135deg, #ff9d5c, #ffb366);
+        color: white;
+        transform: rotate(0deg) scale(1.05) translateX(10px);
+        box-shadow: 8px 8px 0 rgba(209,120,66,0.3);
+      }
+
+      .nav-btn::before {
+        content: '→';
+        margin-right: 0.7rem;
+        font-size: 1.4rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Avatar */
+      #avatar {
+        position: fixed;
+        bottom: 5vh;
+        right: 7vw;
+        transform: translateX(-50%);
+        width: 180px;
+        height: 180px;
+        object-fit: contain;
+        z-index: 50;
+        filter: drop-shadow(0 15px 30px rgba(209,120,66,0.4));
+        pointer-events: none;
+      }
+
+      /* Responsive */
+      @media (max-width: 1200px) {
+        .app-container {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto auto auto auto;
+        }
+        
+        .header h1::before,
+        .header h1::after {
+          position: relative;
+          left: 0;
+          right: 0;
+          display: inline;
+        }
+
+        .scrapbook-page {
+          transform: rotate(0);
+        }
+      }
+
+      @media (max-width: 600px) {
+        .control-buttons {
+          flex-direction: column;
+          width: 100%;
+        }
+        
+        .btn {
+          width: 100%;
+        }
+        
+        .timer-ring-wrapper {
+          width: 300px;
+          height: 300px;
+        }
+        
+        #timer {
+          font-size: 2rem;
+        }
+        
+        .app-container {
+          padding: 1rem;
+          gap: 1rem;
+        }
+
+        #avatar {
+          width: 120px;
+          height: 120px;
+        }
+
+        .roast-box {
+          font-size: 1.5rem;
+          padding: 1.5rem;
+          min-height: 120px;
+        }
+      }
+    </style>
+</head>
+<body>
+  <!-- Animations -->
+  <div class="doodles">
+    <!-- Falling leaves across screen -->
+    <div class="falling-leaves">
+      <div class="leaf-fall" style="left: 10%; animation-delay: 0s;">🍂</div>
+      <div class="leaf-fall" style="left: 30%; animation-delay: 3s;">🍁</div>
+      <div class="leaf-fall" style="left: 50%; animation-delay: 6s;">🍂</div>
+      <div class="leaf-fall" style="left: 70%; animation-delay: 2s;">🍁</div>
+      <div class="leaf-fall" style="left: 85%; animation-delay: 8s;">🍂</div>
+    </div>
+    
+    <!-- Fox paw trail walking across -->
+    <div class="paw-trail" style="animation-delay: 0s;">🐾</div>
+    <div class="paw-trail" style="animation-delay: 2s;">🐾</div>
+    <div class="paw-trail" style="animation-delay: 4s;">🐾</div>
+    <div class="paw-trail" style="animation-delay: 6s;">🐾</div>
+    <div class="paw-trail" style="animation-delay: 8s;">🐾</div>
+  </div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <div class="header">
+       <h1>Procrastination Timer</h1>
+    </div>
+    
+    <!-- Left: Stats -->
+    <div class="scrapbook-page stats-panel">
+      <h3 style="font-family: 'Caveat', cursive; color: #d17842; margin-bottom: 2rem; font-size: 2.2rem; font-weight: 700; text-align: center;">📊 Today's Progress</h3>
+
+      <div class="stat-polaroid">
+        <div class="stat-content">
+          <div class="stat-label">Focus Time</div>
+          <div class="stat-value" id="focusTime">00:00</div>
+        </div>
+      </div>
+
+      <div class="stat-polaroid">
+        <div class="stat-content">
+          <div class="stat-label">Procrastinating Time</div>
+          <div class="stat-value" id="procrastinationTime">00:00</div>
+        </div>
+      </div>
+
+      <div class="stat-polaroid">
+        <div class="stat-content">
+          <div class="stat-label">Productivity</div>
+          <div class="stat-value" id="focusPercentage">0%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center: Timer -->
+    <div class="scrapbook-page timer-section">
+      <div class="timer-container">
+        <div class="timer-ring-wrapper">
+          <svg class="timer-ring" viewBox="0 0 100 100">
+            <defs>
+              <linearGradient id="fox-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ff9d5c;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#d17842;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#8b5a3c;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <circle class="ring-bg" cx="50" cy="50" r="45" />
+            <circle id="progress-ring-circle" class="ring-progress" cx="50" cy="50" r="45" />
+            <text id="timer" x="50" y="58" text-anchor="middle" dominant-baseline="middle">00:00</text>
+          </svg>        
+        </div>
+
+        <input type="text" id="sessionName" class="session-input" placeholder="What are we working on today?" />
+
+        <div class="control-buttons">
+          <button id="startBtn" class="btn btn-primary">▶ Start</button>
+          <button id="pauseBtn" class="btn btn-secondary" disabled>⏸ Pause</button>
+          <button id="stopBtn" class="btn btn-tertiary" disabled>⏹ Stop</button>
+        </div>
+        
+        <div class="roast-box" id="roast">Ready to focus? 🦊</div>
+      </div>
+    </div>
+
+    <!-- Right: Navigation -->
+    <div class="scrapbook-page nav-panel">
+      <h3>Navigate</h3>
+      <button id="milestonesBtn" class="nav-btn">Milestones</button>
+      <button id="chartsBtn" class="nav-btn">Charts</button>
+      <button id="leaderboardBtn" class="nav-btn">Leaderboard</button>
+      <button id="focusModeBtn" class="nav-btn">Focus Mode</button>
+    </div>
+  </div>
+    
+  <!-- Avatar -->
+  <img id="avatar" src="foxNeutral.png" alt="avatar" />
+
+  <audio id="startSound" src="start.mp3"></audio>
+  <audio id="pauseSound" src="airHorn.mp3"></audio>
+  <audio id="stopSound" src="ding.mp3"></audio>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

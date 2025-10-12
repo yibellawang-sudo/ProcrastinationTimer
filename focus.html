@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Focus Mode</title>
+  <style>
+    body {
+      margin: 0;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: "Poppins", sans-serif;
+      color: #ff6f61;
+      -webkit-app-region: drag;
+      height: 100vh;
+    }
+    
+    #timer {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 10px;
+      -webkit-app-region: no-drag;
+    }
+    
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      background: #ff6f61;
+      color: white;
+      cursor: pointer;
+      font-family: "Poppins", sans-serif;
+      transition: background 0.3s;
+    }
+    
+    button:hover {
+      background: #ff856f;
+    }
+  </style>
+</head>
+<body>
+  <div id="timer">00:00</div>
+  <div class="button-group">
+    <button id="pauseBtn">Pause</button>
+    <button id="exitFocusBtn">Exit Focus</button>
+  </div>
+  
+  <script>
+    const { ipcRenderer } = require("electron");
+    const timerDisplay = document.getElementById("timer");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const exitBtn = document.getElementById("exitFocusBtn");
+    
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+    }
+    
+    // Listen for timer updates from main window
+    ipcRenderer.on("update-timer", (event, data) => {
+      timerDisplay.textContent = formatTime(data.stopwatchSeconds);
+    });
+    
+    pauseBtn.addEventListener("click", () => {
+      ipcRenderer.send("pause-timer");
+    });
+    
+    exitBtn.addEventListener("click", () => {
+      ipcRenderer.send("toggle-focus-mode", false);
+    });
+  </script>
+</body>
+</html>
