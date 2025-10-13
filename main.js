@@ -7,22 +7,37 @@ let stopwatchSeconds = 0;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 500,
-        height: 700,
+        width: 1400,
+        height: 900,
+        minWidth: 1200,    
+        minHeight: 800, 
         vibrancy: 'ultra-dark',
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
         },
+        backgroundColor: '#f5e6d3',
+        icon: path.join(__dirname, 'appIcon.png'),
         show: true
     });
 
     mainWindow.loadFile('index.html');
    
-    mainWindow.on("closed", () => {mainWindow = null});
+    ipcMain.on('navigate', (event, page) => {
+        if (mainWindow) {
+            mainWindow.loadFile(page);
+        }
+    });
+
+    mainWindow.on("closed", () => {
+        mainWindow = null;
+        if (focusWindow) {
+            focusWindow.close();
+        }
+    });
 }
 
-app.on("ready", createWindow);
+app.whenReady().then(createWindow);
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {

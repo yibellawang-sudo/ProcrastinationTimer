@@ -25,16 +25,20 @@
         </div>
         <div class="scrapbook-page">
             <div class="chart-container">
-                <h2>Average Time Until First Pause</h2>
+                <h2>Avg Time Until First Pause</h2>
                 <canvas id="pauseChart"></canvas>
             </div>
         </div>
     </div>
 
-    <button onclick="window.location.href='index.html'">⬅ Back</button>
+    <button id="backBtn" class="back-btn">⬅ Back</button>
+
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        function isElectron() {
+            return typeof window !== "undefined" && typeof window.process === "object" && window.process.type === "renderer";
+        }
         const ctx = document.getElementById('weeklyChart').getContext('2d');
         const weeklyData = JSON.parse(localStorage.getItem('weeklyData')) || {};
 
@@ -73,10 +77,6 @@
                 plugins: {
                     legend: {
                         position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Weekly Focus vs Procrastination'
                     }
                 }
             }
@@ -116,8 +116,7 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'top' },
-                    title: { display: true, text: 'Average Time Until First Pause'}
+                    legend: { position: 'top' }
                 },
                 scales: {
                     y: { beginAtZero: true, title: {display: true, text: 'Time (minutes)'} },
@@ -125,9 +124,15 @@
                 }
             }
         });
-        
-        document.getElementById('backBtn').addEventListener('click', () => {
-            window.location.href = 'index.html'; 
+
+        const backBtn = document.getElementById('backBtn');
+        backBtn.addEventListener('click', () => {
+            if (window.electronAPI && typeof window.electronAPI.navigate === 'function') {
+            window.electronAPI.navigate("index.html");
+            } 
+            else {
+            window.location.href = "index.html";
+            }
         });
     </script>
 </body>

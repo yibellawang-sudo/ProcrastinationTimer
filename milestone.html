@@ -9,8 +9,7 @@
   <h1>🏆 Your Milestones</h1>
   <ul id="milestoneList"></ul>
 
-  <button onclick="window.location.href='index.html'">⬅ Back</button>
-
+  <button id="backBtn" class="back-btn">⬅ Back</button>
   <script>
     const list = document.getElementById("milestoneList");
     const milestones = JSON.parse(localStorage.getItem("milestones")) || [];
@@ -24,6 +23,15 @@
         list.appendChild(li);
       });
     }
+
+    backBtn.addEventListener('click', () => {
+      if (window.electronAPI && typeof window.electronAPI.navigate === 'function') {
+      window.electronAPI.navigate("index.html");
+      } 
+      else {
+      window.location.href = "index.html";
+      }
+    });
   </script>
 </body>
 </html>
