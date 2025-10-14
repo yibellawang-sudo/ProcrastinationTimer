@@ -4,6 +4,19 @@
   <meta charset="UTF-8">
   <title>Focus Mode</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      background: rgba(255,255,255,0.2);
+      -webkit-app-region: drag;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 10px;
+      -webkit-app-region: no-drag;
+    }
+  </style>
 </head>
 <body>
   <div id="timer">00:00</div>

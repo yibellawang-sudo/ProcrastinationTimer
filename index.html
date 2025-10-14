@@ -84,6 +84,38 @@
         }
       }
 
+      .header h1::before {
+        content: '';
+        position: absolute;
+        left: 8vw;
+        top: 2.7vh;
+        width: 130px;
+        height: 130px;
+        background-image: url('coffee.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        animation: write 2s infinite ease-in-out;
+      }
+
+      .header h1::after {
+        content: '';
+        position: absolute;
+        right: 8vw;
+        top: 2.7vh;
+        width: 130px;
+        height: 130px;
+        background-image: url('pencil.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        animation: write 2s infinite ease-in-out;
+      }
+
+      @keyframes write {
+        0%, 100% { transform: rotate(0deg) translateY(0); }
+        25% { transform: rotate(-15deg) translateY(-5px); }
+        50% { transform: rotate(5deg) translateY(0); }
+        75% { transform: rotate(-10deg) translateY(-3px); }
+      }
       /* Main container */
       .app-container {
         position: relative;
@@ -119,6 +151,8 @@
         animation-delay: 0.6s;
         transform: rotate(1.5deg);
       }
+
+      
 
       /* Washi tape */
       .scrapbook-page::before {
@@ -190,7 +224,7 @@
 
       .stat-content {
         background: linear-gradient(135deg, #ff9d5c 0%, #ffb366 100%);
-        padding: 2rem 1.5rem;
+        padding: 1rem 1.5rem;
         border-radius: 8px;
         margin-bottom: 0.8rem;
         position: relative;
@@ -243,7 +277,7 @@
       }
 
       .stat-polaroid::before {
-        content: '📌';
+        content: '';
         position: absolute;
         top: -8px;
         right: 20px;
@@ -334,34 +368,14 @@
         }
       }
 
-      /* Nav buttons */
-      .nav-panel h3 {
-        font-family: 'Caveat', cursive;
-        color: #d17842;
-        text-align: center;
-        margin-bottom: 2rem;
-        font-size: 2rem;
-        font-weight: 700;
-        text-shadow: 2px 2px 0 rgba(0,0,0,0.05);
-      }
-
-      .nav-btn:hover::after {
-        width: 300px;
-        height: 300px;
-      }
-
-      .nav-btn:nth-child(even) {
-        transform: rotate(1deg);
-      }
-
       /* Avatar */
       #avatar {
         position: fixed;
         bottom: 5vh;
         right: 7vw;
         transform: translateX(-50%);
-        width: 180px;
-        height: 180px;
+        width: 13vw;
+        height: 13vh;
         object-fit: contain;
         z-index: 50;
         filter: drop-shadow(0 15px 30px rgba(209,120,66,0.4));
@@ -371,7 +385,7 @@
       /* Responsive */
       @media (max-width: 1200px) {
         .app-container {
-          grid-template-columns: 1fr;
+          grid-template-columns: 0.5fr 1fr 0.5fr;
           grid-template-rows: auto auto auto auto;
         }
         
@@ -430,11 +444,21 @@
   <div class="doodles">
     <!-- Falling leaves across screen -->
     <div class="falling-leaves">
-      <div class="leaf-fall" style="left: 10%; animation-delay: 0s;">🍂</div>
-      <div class="leaf-fall" style="left: 30%; animation-delay: 3s;">🍁</div>
-      <div class="leaf-fall" style="left: 50%; animation-delay: 6s;">🍂</div>
-      <div class="leaf-fall" style="left: 70%; animation-delay: 2s;">🍁</div>
-      <div class="leaf-fall" style="left: 85%; animation-delay: 8s;">🍂</div>
+      <div class="leaf-fall" style="left: 10%; animation-delay: 0s;">
+        <img src="leaf.png" alt="leaf">
+      </div>
+      <div class="leaf-fall" style="left: 30%; animation-delay: 3s;">
+        <img src="leaf.png" alt="leaf">
+      </div>
+      <div class="leaf-fall" style="left: 50%; animation-delay: 6s;">
+        <img src="leaf.png" alt="leaf">
+      </div>
+      <div class="leaf-fall" style="left: 70%; animation-delay: 2s;">
+        <img src="leaf.png" alt="leaf">
+      </div>
+      <div class="leaf-fall" style="left: 85%; animation-delay: 8s;">
+        <img src="leaf.png" alt="leaf">
+      </div>
     </div>
     
     <!-- Fox paw trail walking across -->
@@ -445,6 +469,22 @@
     <div class="paw-trail" style="animation-delay: 8s;">🐾</div>
   </div>
 
+  <div class="coffee" style="top: 70%; right: 19%; animation-delay: 1s; transform: scaleX(-1);">
+    <img src="coffee.png" alt="coffee">
+  </div>
+
+  <div class="coffee" style="top: 50%; right: 3%; animation-delay: 3s;">
+    <img src="coffee.png" alt="coffee">
+  </div>
+
+  <div class="pencil" style="top: 45%; right: 18%; animation-delay: 2s; transform: scaleX(-1); ">
+    <img src="pencil.png" alt="pencil">
+  </div>
+
+  <div class="pencil" style="top: 60%; right: 9%; animation-delay: 4s;">
+    <img src="pencil.png" alt="pencil">
+  </div>
+  
   <div class="app-container">
     <!-- Header -->
     <div class="header">
@@ -491,7 +531,7 @@
             </defs>
             <circle class="ring-bg" cx="50" cy="50" r="45" />
             <circle id="progress-ring-circle" class="ring-progress" cx="50" cy="50" r="45" />
-            <text id="timer" x="50" y="58" text-anchor="middle" dominant-baseline="middle">00:00</text>
+            <text id="timer" x="50" y="50" text-anchor="middle" dominant-baseline="middle">00:00</text>
           </svg>        
         </div>
 

@@ -4,7 +4,8 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder"
   },
 
   "repository": {
@@ -19,7 +20,15 @@
     "url": "https://github.com/yibellawang-sudo/ProcrastinationTimer/issues"
   },
   "homepage": "https://github.com/yibellawang-sudo/ProcrastinationTimer#readme",
+  "build": {
+    "appId": "com.bella.procrastinationtimer",
+    "productName": "Procrastination Timer",
+    "mac": {
+      "icon": "assets/appIcon.icns"
+    }
+  },
   "devDependencies": {
-    "electron": "^38.2.2"
+    "electron": "^38.2.2",
+    "electron-builder": "^25.0.0"
   }
 }

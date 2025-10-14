@@ -17,7 +17,7 @@ function createWindow() {
             contextIsolation: false
         },
         backgroundColor: '#f5e6d3',
-        icon: path.join(__dirname, 'appIcon.png'),
+        icon: path.join(__dirname, 'appIcon.icns'),
         show: true
     });
 

@@ -265,7 +265,6 @@ function pauseWalkingAndSetSad() {
     walkInterval = null;
   }
   avatar.src = "foxSad.gif";
-  // Don't change position - freeze where it is
 }
 
 function stopWalkingAndSetNeutral() {
@@ -274,7 +273,6 @@ function stopWalkingAndSetNeutral() {
     walkInterval = null;
   }
   avatar.src = "foxNeutral.png";
-  // Don't change position - freeze where it is
 }
 
 // TIMERS
@@ -310,7 +308,6 @@ function startProcrastinationTracking() {
   
   procrastinationInterval = setInterval(() => {
     procrastinationSeconds++;
-    stopwatchSeconds++;
     updateDisplays();
   }, 1000);
 }
@@ -387,7 +384,7 @@ stopBtn.addEventListener("click", () => {
   localStorage.setItem("cumulativeFocus", cumulativeFocus);
   localStorage.setItem("cumulativeProcrastination", cumulativeProcrastination);
   
-  roastDiv.textContent = `✅ Session ended. Focus: ${formatTime(focusSeconds)}, Procrastination: ${formatTime(procrastinationSeconds)}. Score: ${sessionScore}/100`;
+  roastDiv.textContent = `Session ended. Focus: ${formatTime(focusSeconds)}, Procrastination: ${formatTime(procrastinationSeconds)}. Score: ${sessionScore}/100`;
   
   stopwatchSeconds = 0;
   focusSeconds = 0;
@@ -443,31 +440,3 @@ if (isElectron()) {
 
 // Initial display update
 updateDisplays();
-
-window.addEventListener('DOMContentLoaded', () => {
-  const avatar = document.getElementById("avatar");
-  if (avatar) {
-    // Force clear any transforms
-    avatar.style.transform = "";
-    
-    setTimeout(() => {
-      const rect = avatar.getBoundingClientRect();
-      const computedStyle = window.getComputedStyle(avatar);
-      
-      console.log("=== AVATAR POSITION ON PAGE LOAD ===");
-      console.log("Window width:", window.innerWidth);
-      console.log("Avatar left position:", rect.left);
-      console.log("Avatar right position:", rect.right);
-      console.log("Expected position (from right edge):", window.innerWidth - rect.right, "pixels from right");
-      console.log("CSS right value:", computedStyle.right);
-      console.log("CSS position:", computedStyle.position);
-      console.log("CSS transform:", computedStyle.transform);
-      
-      // Where should it be?
-      const expectedLeft = window.innerWidth - 120 + 50; // screen width - avatar width + 50px offset
-      console.log("Expected left position:", expectedLeft);
-      console.log("Actual left position:", rect.left);
-      console.log("Difference:", Math.abs(expectedLeft - rect.left), "pixels off");
-    }, 100);
-  }
-});
