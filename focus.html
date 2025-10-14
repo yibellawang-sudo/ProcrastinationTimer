@@ -3,47 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Focus Mode</title>
-  <style>
-    body {
-      margin: 0;
-      background: rgba(255,255,255,0.2);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-family: "Poppins", sans-serif;
-      color: #ff6f61;
-      -webkit-app-region: drag;
-      height: 100vh;
-    }
-    
-    #timer {
-      font-size: 2rem;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-    
-    .button-group {
-      display: flex;
-      gap: 10px;
-      -webkit-app-region: no-drag;
-    }
-    
-    button {
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 8px;
-      background: #ff6f61;
-      color: white;
-      cursor: pointer;
-      font-family: "Poppins", sans-serif;
-      transition: background 0.3s;
-    }
-    
-    button:hover {
-      background: #ff856f;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="timer">00:00</div>
